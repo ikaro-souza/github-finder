@@ -3,47 +3,59 @@ import axios from "axios";
 
 import Navbar from "../Navbar";
 import UserList from "../Users/UserList";
+import SearchBar from "../SearchBar";
 
 const styles = {
-    position: "relative"
+  position: "relative"
 };
 
 class App extends Component {
-    state = {
-        userList: {
-            isFetching: false,
-            users: []
-        }
-    };
-
-    async componentDidMount() {
-        // console.log(process.env.REACT_APP_GITHUB_CLIENT_ID)
-
-        this.setState({
-            userList: {
-                isFetching: true
-            }
-        });
-
-        const result = await axios.get(`https:/api.github.com/users?
-            client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
-            client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-
-        this.setState({
-            userList: {
-                isFetching: false,
-                users: result.data
-            }
-        });
+  state = {
+    baseUrl: "https:/api.github.com/",
+    userList: {
+      isFetching: false,
+      users: []
     }
+  };
 
-    render() {
+  appendApiCredentials = url => {
     return (
-      <div className="App" >
+      url +
+      `?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&
+            client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+  };
+
+  getApiRequestUrl = (endPoint = "users") =>
+    this.appendApiCredentials(this.state.baseUrl + endPoint);
+
+  searchUsers = async userName => {
+    var baseUrl = this.getApiRequestUrl("search/users");
+    const url = baseUrl + "&q=" + userName;
+
+    this.setState(state => ({
+      userList: { ...state.userList, isFetching: true }
+    }));
+
+    const result = await axios.get(url);
+
+    this.setState(state => ({
+      userList: {
+        ...state.userList,
+        isFetching: false,
+        users: result.data.items
+      }
+    }));
+  };
+
+  render() {
+    return (
+      <div className="App">
         <Navbar />
 
         <main className="container" style={styles}>
-          <UserList userList={this.state.userList}/>
+          <SearchBar searchUsers={this.searchUsers} />
+          <UserList userList={this.state.userList} />
         </main>
       </div>
     );
