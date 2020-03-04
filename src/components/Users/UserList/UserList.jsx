@@ -7,10 +7,7 @@ import Loader from "../../Loader";
 const styles = {
   display: "grid",
   gridTemplateColumns: "repeat(4, 1fr)",
-  gap: "1rem",
-  height: 465.5,
-  padding: "0 1rem 0 1rem",
-  overflowY: "scroll"
+  gap: "1rem"
 };
 
 const UserList = ({ userList: { users, isFetching } }) => {

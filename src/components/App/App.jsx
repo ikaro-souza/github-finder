@@ -48,14 +48,30 @@ class App extends Component {
     }));
   };
 
+  clearUsers = () => this.setState(state => ({
+    userList: {
+      ...state.userList,
+      users: []
+    }}));
+
   render() {
+    const {isFetching, users} = this.state.userList;
+
     return (
       <div className="App">
         <Navbar />
 
         <main className="container" style={styles}>
-          <SearchBar searchUsers={this.searchUsers} />
-          <UserList userList={this.state.userList} />
+          <SearchBar
+            isShowingUsers={users.length > 0}
+            searchUsers={this.searchUsers}
+            clearUsers={this.clearUsers}
+          />
+          {
+            !(isFetching === false && users.length === 0)
+              ? <UserList userList={this.state.userList} />
+              : null
+          }
         </main>
       </div>
     );
