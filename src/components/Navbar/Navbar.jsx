@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const styles = {
   navbar: {
@@ -11,19 +12,13 @@ const Navbar = ({ icon, title }) => {
   return (
     <nav className="lime darken-1" style={styles.navbar}>
       <div className="nav-wrapper container">
-        <a href="/" className="brand-logo">
+        <Link to="/" className="brand-logo">
           <i className={icon}/>
           {title}
-        </a>
+        </Link>
         <ul id="nav-mobile" className="right hide-on-med-and-down">
           <li>
-            <a href="/">a</a>
-          </li>
-          <li>
-            <a href="/">b</a>
-          </li>
-          <li>
-            <a href="/">c</a>
+            <Link to="/about">About</Link>
           </li>
         </ul>
       </div>

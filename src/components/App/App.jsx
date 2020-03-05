@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import axios from "axios";
 
 import Navbar from "../Navbar";
-import UserList from "../Users/UserList";
-import SearchBar from "../SearchBar";
-import Alert from "../Alert";
+import About from "../Pages/About";
+import Home from "../Pages/Home/Home";
 
 const styles = {
   posRelative: {
@@ -42,14 +42,16 @@ class App extends Component {
     const url = baseUrl + "&q=" + userName;
 
     this.setState(state => ({
+      ...state,
       userList: { ...state.userList, isFetching: true }
     }));
 
     const result = await axios.get(url);
 
     this.setState(state => ({
+      ...state,
+      alert: null,
       userList: {
-        ...state.userList,
         isFetching: false,
         users: result.data.items
       }
@@ -78,26 +80,37 @@ class App extends Component {
     const {isFetching, users} = this.state.userList;
     const {alert} = this.state;
 
+    const homePageProps = {
+      users: {
+        isFetching,
+        userList: users,
+        searchUsers: this.searchUsers,
+        clearUsers: this.clearUsers,
+      },
+      alert: {
+        alertData: alert,
+        setAlert: this.setAlert,
+        hideAlert: this.hideAlert
+      }
+    };
+
     return (
-      <div className="App">
-        <Navbar />
+      <Router>
+        <div className="App">
+          <Navbar />
 
-        <main className="container" style={styles.posRelative}>
-          { alert !== null && <Alert hideAlert={this.hideAlert} alert={alert}/> }
-
-          <SearchBar
-            isShowingUsers={users.length > 0}
-            searchUsers={this.searchUsers}
-            clearUsers={this.clearUsers}
-            setAlert={this.setAlert}
-          />
-          {
-            !(isFetching === false && users.length === 0)
-              ? <UserList userList={this.state.userList} />
-              : null
-          }
-        </main>
-      </div>
+          <main className="container" style={styles.posRelative}>
+            <Switch>
+              <Route exact path="/">
+                <Home users={homePageProps.users} alert={homePageProps.alert} />
+              </Route>
+              <Route path="/about" >
+                <About/>
+              </Route>
+            </Switch>
+          </main>
+        </div>
+      </Router>
     );
   }
 }
