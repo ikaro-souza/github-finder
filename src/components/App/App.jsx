@@ -4,13 +4,21 @@ import axios from "axios";
 import Navbar from "../Navbar";
 import UserList from "../Users/UserList";
 import SearchBar from "../SearchBar";
+import Alert from "../Alert";
 
 const styles = {
-  position: "relative"
+  posRelative: {
+    position: "relative"
+  },
+  alertWarning: {
+    backgroundColor: "yellow",
+    color: "black"
+  }
 };
 
 class App extends Component {
   state = {
+    alert: null,
     baseUrl: "https:/api.github.com/",
     userList: {
       isFetching: false,
@@ -30,7 +38,7 @@ class App extends Component {
     this.appendApiCredentials(this.state.baseUrl + endPoint);
 
   searchUsers = async userName => {
-    var baseUrl = this.getApiRequestUrl("search/users");
+    const baseUrl = this.getApiRequestUrl("search/users");
     const url = baseUrl + "&q=" + userName;
 
     this.setState(state => ({
@@ -54,18 +62,34 @@ class App extends Component {
       users: []
     }}));
 
+  setAlert = (message, type) => {
+    this.setState(state => ({
+      ...state,
+      alert: {
+        message,
+        type
+      }
+    }));
+  };
+
+  hideAlert = () => this.setState(state => ({ ...state, alert: null }));
+
   render() {
     const {isFetching, users} = this.state.userList;
+    const {alert} = this.state;
 
     return (
       <div className="App">
         <Navbar />
 
-        <main className="container" style={styles}>
+        <main className="container" style={styles.posRelative}>
+          { alert !== null && <Alert hideAlert={this.hideAlert} alert={alert}/> }
+
           <SearchBar
             isShowingUsers={users.length > 0}
             searchUsers={this.searchUsers}
             clearUsers={this.clearUsers}
+            setAlert={this.setAlert}
           />
           {
             !(isFetching === false && users.length === 0)

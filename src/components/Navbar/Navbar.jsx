@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const styles = {
   navbar: {
-    marginBottom: 24
+    marginBottom: "3rem"
   }
 };
 

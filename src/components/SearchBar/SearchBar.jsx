@@ -23,7 +23,8 @@ export default class SearchBar extends Component {
   static propTypes = {
     isShowingUsers: PropTypes.bool.isRequired,
     searchUsers: PropTypes.func.isRequired,
-    clearUsers: PropTypes.func.isRequired
+    clearUsers: PropTypes.func.isRequired,
+    setAlert: PropTypes.func.isRequired
   };
 
   state = {
@@ -35,6 +36,12 @@ export default class SearchBar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
+    if (this.state.userName === '') {
+      this.props.setAlert("You need to insert a username", "error");
+      return;
+    }
+
     this.props.searchUsers(this.state.userName);
   };
 
@@ -46,9 +53,8 @@ export default class SearchBar extends Component {
     return (
       <section aria-label="Search bar" className="container" style={styles.mb2}>
         <form className="row" onSubmit={this.handleSubmit} action={null} style={styles.mb0}>
-          <div className="input-field">
+          <div className="input-field col s12">
             <i className="material-icons prefix">search</i>
-            <label htmlFor="userName">Search for users</label>
             <input
               className="validate"
               type="text"
@@ -59,7 +65,7 @@ export default class SearchBar extends Component {
               onChange={this.handleChange}
             />
           </div>
-          <div className="input-field">
+          <div className="input-field col s12">
             <button
               className="btn btn-primary"
               type="submit"
@@ -71,10 +77,12 @@ export default class SearchBar extends Component {
           </div>
         </form>
         {isShowingUsers && <div className="row">
-            <button className="btn grey" style={styles.btnBlock} onClick={this.handleClearUsers}>
-              <i className="material-icons left">close</i>
-              Clear
-            </button>
+            <div className="col s12">
+              <button className="btn grey" style={styles.btnBlock} onClick={this.handleClearUsers}>
+                <i className="material-icons left">close</i>
+                Clear
+              </button>
+            </div>
           </div>
         }
       </section>
