@@ -5,6 +5,7 @@ import axios from "axios";
 import Navbar from "../Navbar";
 import About from "../Pages/About";
 import Home from "../Pages/Home/Home";
+import UserDetailPage from "../Pages/UserDetail/UserDetailPage";
 
 const styles = {
   posRelative: {
@@ -23,6 +24,10 @@ class App extends Component {
     userList: {
       isFetching: false,
       users: []
+    },
+    user: {
+      isFetching: false,
+      data: {}
     }
   };
 
@@ -58,11 +63,31 @@ class App extends Component {
     }));
   };
 
-  clearUsers = () => this.setState(state => ({
-    userList: {
-      ...state.userList,
-      users: []
-    }}));
+  clearUsers = () =>
+    this.setState(state => ({
+      userList: {
+        ...state.userList,
+        users: []
+      }
+    }));
+
+  getUser = async userLogin => {
+    this.setState(state => ({
+      ...state,
+      user: { ...state.user, isFetching: true }
+    }));
+
+    const baseUrl = this.getApiRequestUrl(`users/${userLogin}`);
+    const result = await axios.get(baseUrl);
+
+    this.setState(state => ({
+      ...state,
+      user: {
+        isFetching: false,
+        data: result.data
+      }
+    }));
+  };
 
   setAlert = (message, type) => {
     this.setState(state => ({
@@ -77,15 +102,15 @@ class App extends Component {
   hideAlert = () => this.setState(state => ({ ...state, alert: null }));
 
   render() {
-    const {isFetching, users} = this.state.userList;
-    const {alert} = this.state;
+    const { isFetching, users } = this.state.userList;
+    const { alert, user } = this.state;
 
     const homePageProps = {
       users: {
         isFetching,
         userList: users,
         searchUsers: this.searchUsers,
-        clearUsers: this.clearUsers,
+        clearUsers: this.clearUsers
       },
       alert: {
         alertData: alert,
@@ -104,9 +129,19 @@ class App extends Component {
               <Route exact path="/">
                 <Home users={homePageProps.users} alert={homePageProps.alert} />
               </Route>
-              <Route path="/about" >
-                <About/>
+              <Route path="/about">
+                <About />
               </Route>
+              <Route
+                path="/users/:login"
+                render={props => (
+                  <UserDetailPage
+                    getUser={this.getUser}
+                    user={user}
+                    {...props}
+                  />
+                )}
+              />
             </Switch>
           </main>
         </div>
