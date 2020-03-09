@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import Loader from "../../Loader/Loader";
+import ReposList from "../../Repos/ReposList";
 
 class UserDetailPage extends Component {
   static propTypes = {
@@ -10,12 +10,19 @@ class UserDetailPage extends Component {
     user: PropTypes.shape({
       isFetching: PropTypes.bool.isRequired,
       data: PropTypes.object.isRequired
-    }).isRequired
+    }).isRequired,
+    repos: PropTypes.shape({
+      repos: PropTypes.array.isRequired,
+      isFetching: PropTypes.bool.isRequired
+    }).isRequired,
+    getUser: PropTypes.func.isRequired,
+    getUserRepos: PropTypes.func.isRequired
   };
 
-  componentDidMount() {
-    const login = this.props.match.params.login;
+  async componentDidMount() {
+    const { login } = this.props.match.params;
     this.props.getUser(login);
+    await this.props.getUserRepos(login);
   }
 
   render() {
@@ -31,6 +38,7 @@ class UserDetailPage extends Component {
       login,
       public_repos
     } = data;
+    const { repos } = this.props;
 
     return isFetching ? (
       <div className="row">
@@ -97,6 +105,9 @@ class UserDetailPage extends Component {
               </a>
             </footer>
           </div>
+        </section>
+        <section className="row">
+          <ReposList repos={repos.repos} />
         </section>
       </Fragment>
     );

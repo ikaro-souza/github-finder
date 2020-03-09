@@ -28,6 +28,10 @@ class App extends Component {
     user: {
       isFetching: false,
       data: {}
+    },
+    repos: {
+      repos: [],
+      isFetching: false
     }
   };
 
@@ -89,6 +93,24 @@ class App extends Component {
     }));
   };
 
+  getUserRepos = async userLogin => {
+    this.setState(state => ({
+      ...state,
+      repos: { ...state.repos, isFetching: true }
+    }));
+
+    const baseUrl = this.getApiRequestUrl(`users/${userLogin}/repos`);
+    const result = await axios.get(baseUrl);
+
+    this.setState(state => ({
+      ...state,
+      repos: {
+        isFetching: false,
+        repos: result.data
+      }
+    }));
+  };
+
   setAlert = (message, type) => {
     this.setState(state => ({
       ...state,
@@ -103,7 +125,7 @@ class App extends Component {
 
   render() {
     const { isFetching, users } = this.state.userList;
-    const { alert, user } = this.state;
+    const { alert, user, repos } = this.state;
 
     const homePageProps = {
       users: {
@@ -138,6 +160,8 @@ class App extends Component {
                   <UserDetailPage
                     getUser={this.getUser}
                     user={user}
+                    getUserRepos={this.getUserRepos}
+                    repos={repos}
                     {...props}
                   />
                 )}
