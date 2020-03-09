@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 const styles = {
@@ -19,73 +19,79 @@ const styles = {
   }
 };
 
-export default class SearchBar extends Component {
-  static propTypes = {
-    isShowingUsers: PropTypes.bool.isRequired,
-    searchUsers: PropTypes.func.isRequired,
-    clearUsers: PropTypes.func.isRequired,
-    setAlert: PropTypes.func.isRequired
-  };
+const SearchBar = ({ isShowingUsers, searchUsers, clearUsers, setAlert }) => {
+  const [userName, setUserName] = useState("");
 
-  state = {
-    userName: ""
-  };
+  const handleChange = event => setUserName(event.target.value);
 
-  handleChange = event =>
-    this.setState({ [event.target.name]: event.target.value });
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
 
-    if (this.state.userName === '') {
-      this.props.setAlert("You need to insert a username", "error");
+    if (userName === "") {
+      setAlert("You need to insert a username", "error");
       return;
     }
 
-    this.props.searchUsers(this.state.userName);
+    searchUsers(userName);
+    setUserName("");
   };
 
-  handleClearUsers = () => this.props.clearUsers();
+  const handleClearUsers = () => clearUsers();
 
-  render() {
-    const {isShowingUsers} = this.props;
-
-    return (
-      <section aria-label="Search bar" className="container" style={styles.mb2}>
-        <form className="row" onSubmit={this.handleSubmit} action={null} style={styles.mb0}>
-          <div className="input-field col s12">
-            <i className="material-icons prefix">search</i>
-            <input
-              className="validate"
-              type="text"
-              name="userName"
-              id="userName"
-              placeholder="Search for users..."
-              value={this.state.userName}
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="input-field col s12">
+  return (
+    <section aria-label="Search bar" className="container" style={styles.mb2}>
+      <form
+        className="row"
+        onSubmit={handleSubmit}
+        action={null}
+        style={styles.mb0}
+      >
+        <div className="input-field col s12">
+          <i className="material-icons prefix">search</i>
+          <input
+            className="validate"
+            type="text"
+            name="userName"
+            id="userName"
+            placeholder="Search for users..."
+            value={userName}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="input-field col s12">
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={styles.btnBlock}
+          >
+            <i className="material-icons left">search</i>
+            Search
+          </button>
+        </div>
+      </form>
+      {isShowingUsers && (
+        <div className="row">
+          <div className="col s12">
             <button
-              className="btn btn-primary"
-              type="submit"
+              className="btn grey"
               style={styles.btnBlock}
+              onClick={handleClearUsers}
             >
-              <i className="material-icons left">search</i>
-              Search
+              <i className="material-icons left">close</i>
+              Clear
             </button>
           </div>
-        </form>
-        {isShowingUsers && <div className="row">
-            <div className="col s12">
-              <button className="btn grey" style={styles.btnBlock} onClick={this.handleClearUsers}>
-                <i className="material-icons left">close</i>
-                Clear
-              </button>
-            </div>
-          </div>
-        }
-      </section>
-    );
-  }
-}
+        </div>
+      )}
+    </section>
+  );
+};
+
+SearchBar.propTypes = {
+  isShowingUsers: PropTypes.bool.isRequired,
+  searchUsers: PropTypes.func.isRequired,
+  clearUsers: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired
+};
+
+export default SearchBar;
