@@ -4,7 +4,13 @@ import PropTypes from "prop-types";
 import Loader from "../../Loader/Loader";
 import ReposList from "../../Repos/ReposList";
 
-const UserDetailPage = ({ user, getUser, repos, getUserRepos, match }) => {
+const UserDetailPage = ({
+  user: { data, isFetching },
+  getUser,
+  repos,
+  getUserRepos,
+  match
+}) => {
   useEffect(() => {
     const { login } = match.params;
     getUser(login);
@@ -12,7 +18,6 @@ const UserDetailPage = ({ user, getUser, repos, getUserRepos, match }) => {
     //eslint-disable-next-line
   }, []);
 
-  const { data, isFetching } = user;
   const {
     avatar_url,
     bio,
