@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Alert from "../../Alert";
@@ -11,18 +11,16 @@ const Home = ({
 }) => {
   return (
     <Fragment>
-      { alertData !== null && <Alert hideAlert={hideAlert} alert={alertData} /> }
+      {alertData !== null && <Alert hideAlert={hideAlert} alert={alertData} />}
       <SearchBar
         isShowingUsers={userList.length > 0}
         searchUsers={searchUsers}
         clearUsers={clearUsers}
         setAlert={setAlert}
       />
-      {
-        !(isFetching === false && userList === 0)
-          ? <UserList users={userList} isFetching={isFetching} />
-          : null
-      }
+      {!(isFetching === false && userList === 0) ? (
+        <UserList users={userList} isFetching={isFetching} />
+      ) : null}
     </Fragment>
   );
 };
@@ -32,7 +30,7 @@ Home.propTypes = {
     alertData: PropTypes.shape({
       message: PropTypes.string.isRequired,
       type: PropTypes.string
-    }).isRequired,
+    }),
     setAlert: PropTypes.func.isRequired,
     hideAlert: PropTypes.func.isRequired
   }).isRequired,
@@ -40,7 +38,7 @@ Home.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     userList: PropTypes.array.isRequired,
     searchUsers: PropTypes.func.isRequired,
-    clearUsers: PropTypes.func.isRequired,
+    clearUsers: PropTypes.func.isRequired
   }).isRequired
 };
 
