@@ -1,45 +1,27 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
+import React, { Fragment, useContext } from "react";
+import GithubContext from "../../../context/github/context";
 
 import Alert from "../../Alert";
 import SearchBar from "../../SearchBar";
 import UserList from "../../Users/UserList";
 
-const Home = ({
-  alert: { alertData, setAlert, hideAlert },
-  users: { isFetching, userList, searchUsers, clearUsers }
-}) => {
+const Home = () => {
+  const githubContext = useContext(GithubContext);
+
+  const userList = githubContext.userList;
+  const isFetching = userList.isFetching;
+
+  const alertData = githubContext.alert;
+  const hideAlert = githubContext.hideAlert;
+
   return (
     <Fragment>
       {alertData !== null && <Alert hideAlert={hideAlert} alert={alertData} />}
-      <SearchBar
-        isShowingUsers={userList.length > 0}
-        searchUsers={searchUsers}
-        clearUsers={clearUsers}
-        setAlert={setAlert}
-      />
+      <SearchBar />
       {!(isFetching === false && userList === 0) ? (
-        <UserList users={userList} isFetching={isFetching} />
+        <UserList userList={userList} />
       ) : null}
     </Fragment>
   );
 };
-
-Home.propTypes = {
-  alert: PropTypes.shape({
-    alertData: PropTypes.shape({
-      message: PropTypes.string.isRequired,
-      type: PropTypes.string
-    }),
-    setAlert: PropTypes.func.isRequired,
-    hideAlert: PropTypes.func.isRequired
-  }).isRequired,
-  users: PropTypes.shape({
-    isFetching: PropTypes.bool.isRequired,
-    userList: PropTypes.array.isRequired,
-    searchUsers: PropTypes.func.isRequired,
-    clearUsers: PropTypes.func.isRequired
-  }).isRequired
-};
-
 export default Home;

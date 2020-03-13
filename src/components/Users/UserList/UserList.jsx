@@ -10,7 +10,7 @@ const styles = {
   gap: "1rem"
 };
 
-const UserList = ({ users, isFetching }) => {
+const UserList = ({ userList: { users, isFetching } }) => {
   return isFetching ? (
     <div className="center-align">
       <Loader />

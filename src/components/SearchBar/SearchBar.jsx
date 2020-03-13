@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useContext } from "react";
+
+import GithubContext from "../../context/github/context";
 
 const styles = {
   btnBlock: {
@@ -19,7 +20,11 @@ const styles = {
   }
 };
 
-const SearchBar = ({ isShowingUsers, searchUsers, clearUsers, setAlert }) => {
+const SearchBar = () => {
+  const githubContext = useContext(GithubContext);
+  const setAlert = githubContext.setAlertData;
+  const isShowingUsers = githubContext.userList.users.length > 0;
+
   const [userName, setUserName] = useState("");
 
   const handleChange = event => setUserName(event.target.value);
@@ -32,11 +37,11 @@ const SearchBar = ({ isShowingUsers, searchUsers, clearUsers, setAlert }) => {
       return;
     }
 
-    searchUsers(userName);
+    githubContext.searchUsers(userName);
     setUserName("");
   };
 
-  const handleClearUsers = () => clearUsers();
+  const handleClearUsers = () => githubContext.clearUsers();
 
   return (
     <section aria-label="Search bar" className="container" style={styles.mb2}>
@@ -85,13 +90,6 @@ const SearchBar = ({ isShowingUsers, searchUsers, clearUsers, setAlert }) => {
       )}
     </section>
   );
-};
-
-SearchBar.propTypes = {
-  isShowingUsers: PropTypes.bool.isRequired,
-  searchUsers: PropTypes.func.isRequired,
-  clearUsers: PropTypes.func.isRequired,
-  setAlert: PropTypes.func.isRequired
 };
 
 export default SearchBar;
